@@ -18,6 +18,7 @@ import com.github.commandercool.cloudsurfer.controller.mri.model.FolderEntry;
 import com.github.commandercool.cloudsurfer.controller.mri.model.Subject;
 import com.github.commandercool.cloudsurfer.controller.mri.model.SubjectList;
 import com.github.commandercool.cloudsurfer.controller.mri.model.UploadResult;
+import com.github.commandercool.cloudsurfer.db.SubjectStorageService;
 import com.github.commandercool.cloudsurfer.filesystem.FileSystemService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class FileController {
 
     private final FileSystemService fsService;
+    private final SubjectStorageService subjectStorageService;
 
     @CrossOrigin
     @RequestMapping(path = "/upload", method = RequestMethod.POST,
@@ -49,6 +51,19 @@ public class FileController {
     @RequestMapping(path = "/subjects", method = RequestMethod.GET, produces = "application/json")
     ResponseEntity<SubjectList> getSubjects() {
         List<Subject> subjects = fsService.getRootFolders()
+                .stream()
+                .map(Subject::formString)
+                .collect(Collectors.toList());
+        SubjectList subjectList = new SubjectList();
+        subjectList.setSubjects(subjects);
+        return ResponseEntity.ok()
+                .header("Access-Control-Allow-Origin", "*")
+                .body(subjectList);
+    }
+
+    @RequestMapping(path = "/subjects/tag", method = RequestMethod.GET, produces = "application/json")
+    ResponseEntity<SubjectList> getSubjectsByTag(@RequestParam(name = "tag") String tag) {
+        List<Subject> subjects = subjectStorageService.fetchSubjectsByTag(tag)
                 .stream()
                 .map(Subject::formString)
                 .collect(Collectors.toList());

@@ -50,6 +50,9 @@ public class SubjectInfo {
     @JsonProperty("status")
     private int status;
 
+    @JsonProperty("tags")
+    private List<String> tags = new ArrayList<>();
+
     @JsonProperty("steps")
     private List<ReconAllStep> stepStatList = new ArrayList<>();
 
