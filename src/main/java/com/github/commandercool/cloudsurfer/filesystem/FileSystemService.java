@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -56,6 +57,19 @@ public class FileSystemService {
             return Files.readString(Paths.get(SUBJ_DIR + name + STATUS_LOG));
         } catch (IOException e) {
             return "";
+        }
+    }
+
+    public int getProgress(String name) {
+        String log = readStatusLog(name);
+        if (!log.isEmpty()) {
+            String[] statusLog = log
+                    .split("\n");
+            return (int) Arrays.stream(statusLog)
+                    .filter(s -> s.startsWith("#@#"))
+                    .count();
+        } else {
+            return 0;
         }
     }
 

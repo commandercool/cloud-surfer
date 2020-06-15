@@ -1,21 +1,22 @@
 package com.github.commandercool.cloudsurfer.controller.subject.model;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.commandercool.cloudsurfer.filesystem.model.FsSubjectInfo;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class SubjectInfo {
 
     private static final List<String> STEPS =
@@ -56,62 +57,35 @@ public class SubjectInfo {
     @JsonProperty("steps")
     private List<ReconAllStep> stepStatList = new ArrayList<>();
 
-    public static SubjectInfo fromFileInfo(FsSubjectInfo fsSubjectInfo) {
-        SubjectInfo subjectInfo = new SubjectInfo();
-        subjectInfo.setName(fsSubjectInfo.getName());
-        if (!fsSubjectInfo.getStatusLog().isEmpty()) {
-            String[] statusLog = fsSubjectInfo.getStatusLog()
-                    .split("\n");
-            List<ReconAllStep> steps = Arrays.stream(statusLog)
-                    .filter(s -> s.startsWith("#@#"))
-                    .map(s -> new ReconAllStep(getStepName(s), getDateTime(s), 2))
-                    .collect(Collectors.toList());
-            if (fsSubjectInfo.isRunning()) {
-                subjectInfo.setStatus(1);
-                subjectInfo.reconRunning = true;
-                steps.get(steps.size() - 1).setStatus(1);
-            } else {
-                subjectInfo.reconRunning = false;
-                if (statusLog[statusLog.length - 1].contains("exited with ERRORS")) {
-                    subjectInfo.setStatus(3);
-                    steps.get(steps.size() - 1).setStatus(3);
-                } else {
-                    subjectInfo.setStatus(2);
-                    steps.get(steps.size() - 1).setStatus(2);
-                }
-            }
-            if (steps.size() < STEPS.size()) {
-                STEPS.subList(steps.size(), STEPS.size()).forEach(s -> {
-                    steps.add(new ReconAllStep(s, null, 0));
-                });
-            }
-            subjectInfo.setStepStatList(steps);
+    @JsonIgnore
+    private String container;
+
+    @JsonIgnore
+    private Integer id;
+
+    @JsonIgnore
+    private Integer progress;
+
+    public SubjectInfo(String name) {
+        this.name = name;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
+        AtomicInteger counter = new AtomicInteger(1);
+        stepStatList.addAll(STEPS.stream()
+                .map(s -> new ReconAllStep(s, LocalDateTime.now(), getStatus(counter.getAndIncrement(), progress)))
+                .collect(Collectors.toList()));
+    }
+
+    public int getStatus(int counter, int progress) {
+        if (counter < progress) {
+            return 2;
+        } else if (counter > progress) {
+            return 0;
         } else {
-            subjectInfo.setStatus(0);
+            return status;
         }
-        return subjectInfo;
-    }
-
-    private static int getStatus(String full, String runningCommand, String failedCommand) {
-        if (!runningCommand.isEmpty() && runningCommand.equals(full)) {
-            return 1;
-        } else if (!failedCommand.isEmpty() && failedCommand.equals(full)) {
-            return 3;
-        }
-        return 2;
-    }
-
-    private static String getStepName(String full) {
-        int length = full.length();
-        return full.substring(4, length - 29);
-    }
-
-    private static LocalDateTime getDateTime(String full) {
-        int length = full.length();
-        String dateTimeStr = full.substring(length - 28, length);
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("EEE LLL  d HH:mm:ss v uuuu")
-                .withLocale(Locale.US);
-        return LocalDateTime.parse(dateTimeStr, dateTimeFormatter);
     }
 
 }

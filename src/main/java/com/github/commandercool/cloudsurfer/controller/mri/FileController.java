@@ -18,11 +18,13 @@ import com.github.commandercool.cloudsurfer.controller.mri.model.FolderEntry;
 import com.github.commandercool.cloudsurfer.controller.mri.model.Subject;
 import com.github.commandercool.cloudsurfer.controller.mri.model.SubjectList;
 import com.github.commandercool.cloudsurfer.controller.mri.model.UploadResult;
+import com.github.commandercool.cloudsurfer.controller.mri.service.MriTransactionalService;
 import com.github.commandercool.cloudsurfer.db.SubjectStorageService;
 import com.github.commandercool.cloudsurfer.filesystem.FileSystemService;
 
 import lombok.RequiredArgsConstructor;
 
+@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/mri/v1")
@@ -30,39 +32,33 @@ public class FileController {
 
     private final FileSystemService fsService;
     private final SubjectStorageService subjectStorageService;
+    private final MriTransactionalService mriService;
 
-    @CrossOrigin
     @RequestMapping(path = "/upload", method = RequestMethod.POST,
                     consumes = "multipart/form-data")
-    ResponseEntity<UploadResult> uploadMri(@RequestParam(name = "src") String src,
-            @RequestParam(name = "subj") String subj, @RequestParam(name = "upload") MultipartFile mriFile) {
+    public ResponseEntity<UploadResult> uploadMri(@RequestParam(name = "src") String src,
+            @RequestParam(name = "upload") MultipartFile mriFile) {
         try (InputStream input = mriFile.getInputStream()) {
-            fsService.saveFile(subj + "/" + src, input);
+            mriService.addSubject(src, input);
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.badRequest()
                     .body(new UploadResult("Error with upload: " + e.getMessage()));
         }
-        return ResponseEntity
-                .ok()
+        return ResponseEntity.ok()
                 .body(new UploadResult("Upload successful"));
     }
 
     @RequestMapping(path = "/subjects", method = RequestMethod.GET, produces = "application/json")
-    ResponseEntity<SubjectList> getSubjects() {
-        List<Subject> subjects = fsService.getRootFolders()
-                .stream()
-                .map(Subject::formString)
-                .collect(Collectors.toList());
+    public ResponseEntity<SubjectList> getSubjects() {
         SubjectList subjectList = new SubjectList();
-        subjectList.setSubjects(subjects);
+        subjectList.setSubjects(mriService.getSubjects());
         return ResponseEntity.ok()
-                .header("Access-Control-Allow-Origin", "*")
                 .body(subjectList);
     }
 
     @RequestMapping(path = "/subjects/tag", method = RequestMethod.GET, produces = "application/json")
-    ResponseEntity<SubjectList> getSubjectsByTag(@RequestParam(name = "tag") String tag) {
+    public ResponseEntity<SubjectList> getSubjectsByTag(@RequestParam(name = "tag") String tag) {
         List<Subject> subjects = subjectStorageService.fetchSubjectsByTag(tag)
                 .stream()
                 .map(Subject::formString)
@@ -70,7 +66,6 @@ public class FileController {
         SubjectList subjectList = new SubjectList();
         subjectList.setSubjects(subjects);
         return ResponseEntity.ok()
-                .header("Access-Control-Allow-Origin", "*")
                 .body(subjectList);
     }
 
@@ -83,7 +78,7 @@ public class FileController {
                 .collect(Collectors.toList());
         FolderContents folderContents = new FolderContents();
         folderContents.setEntries(contents);
-        return ResponseEntity.ok().header("Access-Control-Allow-Origin", "*").body(folderContents);
+        return ResponseEntity.ok().body(folderContents);
     }
 
 

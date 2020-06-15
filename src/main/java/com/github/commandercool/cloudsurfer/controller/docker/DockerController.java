@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.commandercool.cloudsurfer.docker.DockerService;
+import com.github.commandercool.cloudsurfer.controller.docker.service.TransactionalDockerService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,12 +15,12 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/container/v1")
 public class DockerController {
 
-    private final DockerService dockerService;
+    private final TransactionalDockerService dockerService;
 
     @CrossOrigin
     @RequestMapping(path = "/run", method = RequestMethod.POST)
     public void runReconAll(@RequestParam("subj") String subject) {
-        dockerService.runRecon(subject);
+        dockerService.runReconAll(subject);
     }
 
 }

@@ -6,14 +6,33 @@ import static com.github.commandercool.cloudsurfer.db.tables.Tags.TAGS;
 import java.util.List;
 
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class SubjectStorageService {
 
     @Autowired
     private DSLContext dsl;
+
+    public void addSubject(String name) {
+        dsl.insertInto(SUBJECT)
+                .set(SUBJECT.NAME, name)
+                .set(SUBJECT.USERNAME, "")
+                .execute();
+    }
+
+    public Result<Record> fetchSubjects() {
+        return dsl.select()
+                .from(SUBJECT)
+                .leftJoin(TAGS)
+                .on(TAGS.SUBJ_ID.eq(SUBJECT.ID))
+                .fetch();
+    }
 
     public List<String> fetchSubjectTags(String name, String username) {
         List<String> tags = dsl.select(TAGS.TAG)
