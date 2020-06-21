@@ -8,6 +8,7 @@ import org.jooq.Result;
 import org.springframework.stereotype.Component;
 
 import com.github.commandercool.cloudsurfer.controller.subject.model.SubjectInfo;
+import com.github.commandercool.cloudsurfer.db.exceptions.NoSuchSubjectException;
 import com.github.commandercool.cloudsurfer.db.tables.Subject;
 import com.github.commandercool.cloudsurfer.db.tables.Tags;
 
@@ -19,8 +20,11 @@ public class SubjectInfoAdapter {
 
     private final SubjectInfoService subjectInfoService;
 
-    public SubjectInfo fetchInfo(String name) {
+    public SubjectInfo fetchInfo(String name) throws NoSuchSubjectException {
         Result<Record> records = subjectInfoService.fetchSubjectInfo(name);
+        if (records.isEmpty()) {
+            throw new NoSuchSubjectException(name);
+        }
         SubjectInfo info = new SubjectInfo(name);
         info.setStatus(records.get(0)
                 .get(Subject.SUBJECT.STATUS, Integer.class));

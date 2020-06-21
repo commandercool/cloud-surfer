@@ -38,6 +38,7 @@ public class MriTransactionalService {
                     String name = s.get(SUBJECT.NAME, String.class);
                     Subject subject = subjectMap.computeIfAbsent(name, k -> new Subject());
                     subject.setName(name);
+                    subject.setStatus(s.get(SUBJECT.STATUS, Integer.class));
                     subject.getTags().add(s.get(TAGS.TAG, String.class));
                 });
         return new ArrayList<>(subjectMap.values());

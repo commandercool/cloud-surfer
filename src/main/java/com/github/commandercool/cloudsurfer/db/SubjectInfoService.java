@@ -2,6 +2,7 @@ package com.github.commandercool.cloudsurfer.db;
 
 import static com.github.commandercool.cloudsurfer.db.tables.Subject.SUBJECT;
 import static com.github.commandercool.cloudsurfer.db.tables.Tags.TAGS;
+import static com.github.commandercool.cloudsurfer.security.UserHelper.getUserName;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -24,6 +25,7 @@ public class SubjectInfoService {
                 .join(TAGS)
                 .on(TAGS.SUBJ_ID.eq(SUBJECT.ID))
                 .where(SUBJECT.NAME.eq(name))
+                .and(SUBJECT.USERNAME.eq(getUserName()))
                 .fetch();
     }
 

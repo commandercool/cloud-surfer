@@ -1,0 +1,15 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
+  datasource:
+    url: jdbc:postgresql://localhost/cloudsurfer
+    username: postgres
+    password: postgres
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8083/auth/realms/cloud-surfer
+          jwk-set-uri: http://localhost:8083/auth/realms/cloud-surfer/protocol/openid-connect/certs

@@ -13,6 +13,7 @@ import lombok.Setter;
 public class Subject {
 
     private String name;
+    private Integer status;
     private List<String> tags = new ArrayList<>();
 
     public static Subject formString(String name) {
