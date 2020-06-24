@@ -20,7 +20,7 @@ import com.github.commandercool.cloudsurfer.filesystem.model.FsSubjectInfo;
 @Service
 public class FileSystemService {
 
-    private static final String SUBJ_DIR = "freesurfer/";
+    private static final String SUBJ_DIR = "freesurfer";
     private static final String STATUS_LOG = "/scripts/recon-all-status.log";
     private static final String RUN_LOCK = "/scripts/IsRunning.lh+rh";
 
@@ -56,12 +56,13 @@ public class FileSystemService {
         try {
             return Files.readString(Paths.get(SUBJ_DIR + name + STATUS_LOG));
         } catch (IOException e) {
+            e.printStackTrace();
             return "";
         }
     }
 
-    public int getProgress(String name) {
-        String log = readStatusLog(name);
+    public int getProgress(String path) {
+        String log = readStatusLog(path);
         if (!log.isEmpty()) {
             String[] statusLog = log
                     .split("\n");

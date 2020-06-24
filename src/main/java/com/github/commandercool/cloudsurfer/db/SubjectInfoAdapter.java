@@ -48,6 +48,7 @@ public class SubjectInfoAdapter {
                     info.setName(r.get(Subject.SUBJECT.NAME, String.class));
                     info.setContainer(r.get(Subject.SUBJECT.CONTAINER, String.class));
                     info.setProgress(r.get(Subject.SUBJECT.PROGRESS, Integer.class));
+                    info.setPath(r.get(Subject.SUBJECT.PATH, String.class));
                     return info;
                 })
                 .collect(Collectors.toList());

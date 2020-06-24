@@ -47,7 +47,7 @@ public class MriTransactionalService {
     }
 
     private String getPath(String name) {
-        return getUserName() + "/" + name.split("\\.")[0] + "/" + name;
+        return "/" + getUserName() + "/" + name.split("\\.")[0] + "/" + name;
     }
 
 }

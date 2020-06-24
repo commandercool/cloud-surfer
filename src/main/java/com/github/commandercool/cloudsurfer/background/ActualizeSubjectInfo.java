@@ -21,7 +21,7 @@ public class ActualizeSubjectInfo {
     public void actualizeRunningTasks() {
         adapter.fetchRunningInfo()
                 .forEach(i -> {
-                    i.setProgress(fs.getProgress(i.getName()));
+                    i.setProgress(fs.getProgress(i.getPath()));
                     if (dockerService.isRunning(i.getContainer())) {
                         i.setStatus(1);
                     } else if (dockerService.finishedSuccessfully(i.getContainer())) {

@@ -1,6 +1,5 @@
 package com.github.commandercool.cloudsurfer.controller.subject.model;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -76,7 +75,7 @@ public class SubjectInfo {
         this.progress = progress;
         AtomicInteger counter = new AtomicInteger(1);
         stepStatList.addAll(STEPS.stream()
-                .map(s -> new ReconAllStep(s, LocalDateTime.now(), getStatus(counter.getAndIncrement(), progress)))
+                .map(s -> new ReconAllStep(s, getStatus(counter.getAndIncrement(), progress)))
                 .collect(Collectors.toList()));
     }
 
