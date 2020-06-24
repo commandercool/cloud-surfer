@@ -2,6 +2,7 @@ package com.github.commandercool.cloudsurfer.db;
 
 import static com.github.commandercool.cloudsurfer.db.tables.Subject.SUBJECT;
 import static com.github.commandercool.cloudsurfer.db.tables.Tags.TAGS;
+import static com.github.commandercool.cloudsurfer.security.UserHelper.getUserName;
 
 import java.util.List;
 
@@ -19,10 +20,11 @@ public class SubjectStorageService {
     @Autowired
     private DSLContext dsl;
 
-    public void addSubject(String name) {
+    public void addSubject(String name, String path) {
         dsl.insertInto(SUBJECT)
                 .set(SUBJECT.NAME, name)
-                .set(SUBJECT.USERNAME, "")
+                .set(SUBJECT.USERNAME, getUserName())
+                .set(SUBJECT.PATH, path)
                 .execute();
     }
 
@@ -35,7 +37,7 @@ public class SubjectStorageService {
     }
 
     public List<String> fetchSubjectTags(String name, String username) {
-        List<String> tags = dsl.select(TAGS.TAG)
+        return dsl.select(TAGS.TAG)
                 .from(TAGS)
                 .join(SUBJECT)
                 .on(TAGS.SUBJ_ID.eq(SUBJECT.ID))
@@ -43,7 +45,6 @@ public class SubjectStorageService {
                 .and(SUBJECT.USERNAME.eq(username))
                 .fetch()
                 .getValues(TAGS.TAG, String.class);
-        return tags;
     }
 
     public List<String> fetchSubjectsByTag(String tag) {

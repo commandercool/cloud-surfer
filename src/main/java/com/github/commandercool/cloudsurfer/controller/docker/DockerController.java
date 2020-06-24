@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.commandercool.cloudsurfer.controller.docker.service.TransactionalDockerService;
+import com.github.commandercool.cloudsurfer.db.exceptions.NoSuchSubjectException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +20,7 @@ public class DockerController {
 
     @CrossOrigin
     @RequestMapping(path = "/run", method = RequestMethod.POST)
-    public void runReconAll(@RequestParam("subj") String subject) {
+    public void runReconAll(@RequestParam("subj") String subject) throws NoSuchSubjectException {
         dockerService.runReconAll(subject);
     }
 

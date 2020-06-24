@@ -22,7 +22,7 @@ public class SubjectInfoService {
     public Result<Record> fetchSubjectInfo(String name) {
         return dsl.select()
                 .from(SUBJECT)
-                .join(TAGS)
+                .leftJoin(TAGS)
                 .on(TAGS.SUBJ_ID.eq(SUBJECT.ID))
                 .where(SUBJECT.NAME.eq(name))
                 .and(SUBJECT.USERNAME.eq(getUserName()))

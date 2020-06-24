@@ -25,17 +25,25 @@ public class DockerService {
         }
     }
 
-    public String runRecon(String subject) {
+    public String runRecon(String subject, String path) {
+        String subjectNameTrimmed = subject.split("\\.")[0];
         CreateContainerResponse containerRes = client.createContainerCmd("alerokhin/freesurfer6")
                 .withBinds(new Bind("C:\\freesurfer\\license", new Volume("/usr/local/freesurfer/license")),
-                        new Bind("C:\\mri\\cloud-surfer\\freesurfer\\ashurova", new Volume("/usr/local/freesurfer/subjects/ashurova")))
-                .withEntrypoint("/bin/bash", "-c", "cp /usr/local/freesurfer/license/license.txt /usr/local/freesurfer/license.txt;"
-                        + "export FREESURFER_HOME=/usr/local/freesurfer;"
-                        + "source /usr/local/freesurfer/SetUpFreeSurfer.sh;"
-                        + "echo $FREESURFER_HOME;"
-                        + "rm -f /usr/local/freesurfer/subjects/ashurova/scripts/IsRunning.lh+rh;"
-                        + "rm -f /usr/local/freesurfer/subjects/ashurova/scripts/recon-all-status.log;"
-                        + "recon-all -all -subjid " + subject)
+                        new Bind("C:\\mri\\cloud-surfer\\freesurfer" + path,
+                                new Volume("/usr/local/freesurfer/subjects/" + subjectNameTrimmed)))
+                .withEntrypoint("/bin/bash", "-c",
+                                "cp /usr/local/freesurfer/license/license.txt /usr/local/freesurfer/license.txt;"
+                                + "export FREESURFER_HOME=/usr/local/freesurfer;"
+                                + "source /usr/local/freesurfer/SetUpFreeSurfer.sh;"
+                                + "echo $FREESURFER_HOME;"
+                                + "cd /usr/local/freesurfer/subjects/" + subjectNameTrimmed + ";"
+                                        + "pwd;"
+                                + "ls -l;"
+                                + "mkdir mri mri/orig;"
+                                + "mri_convert " + subject + " mri/orig/001.mgz;"
+                                + "rm -f /usr/local/freesurfer/subjects/" + subjectNameTrimmed + "/scripts/IsRunning.lh+rh;"
+                                + "rm -f /usr/local/freesurfer/subjects/" + subjectNameTrimmed + "/scripts/recon-all-status.log;"
+                                + "recon-all -all -subjid " + subjectNameTrimmed)
                 .exec();
         client.startContainerCmd(containerRes.getId())
                 .exec();

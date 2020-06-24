@@ -30,6 +30,8 @@ public class SubjectInfoAdapter {
                 .get(Subject.SUBJECT.STATUS, Integer.class));
         info.setProgress(records.get(0)
                 .get(Subject.SUBJECT.PROGRESS, Integer.class));
+        info.setPath(records.get(0)
+                .get(Subject.SUBJECT.PATH, String.class));
         records.forEach(r -> {
             info.getTags()
                     .add(r.get(Tags.TAGS.TAG, String.class));

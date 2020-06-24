@@ -63,6 +63,9 @@ public class SubjectInfo {
     @JsonIgnore
     private Integer id;
 
+    @JsonIgnore
+    private String path;
+
     private Integer progress;
 
     public SubjectInfo(String name) {

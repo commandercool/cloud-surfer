@@ -2,6 +2,7 @@ package com.github.commandercool.cloudsurfer.controller.mri.service;
 
 import static com.github.commandercool.cloudsurfer.db.Tables.TAGS;
 import static com.github.commandercool.cloudsurfer.db.tables.Subject.SUBJECT;
+import static com.github.commandercool.cloudsurfer.security.UserHelper.getUserName;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -27,8 +28,9 @@ public class MriTransactionalService {
     private final SubjectStorageService subjectStorageService;
 
     public void addSubject(String name, InputStream mriInput) {
-        subjectStorageService.addSubject(name);
-        fsService.saveFile(name + "/" + name, mriInput);
+        String path = getPath(name);
+        subjectStorageService.addSubject(name, path);
+        fsService.saveFile(path, mriInput);
     }
 
     public List<Subject> getSubjects() {
@@ -42,6 +44,10 @@ public class MriTransactionalService {
                     subject.getTags().add(s.get(TAGS.TAG, String.class));
                 });
         return new ArrayList<>(subjectMap.values());
+    }
+
+    private String getPath(String name) {
+        return getUserName() + "/" + name.split("\\.")[0] + "/" + name;
     }
 
 }
