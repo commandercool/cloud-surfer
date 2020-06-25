@@ -21,7 +21,7 @@ public class TransactionalDockerService {
 
     public void runReconAll(String name) throws NoSuchSubjectException, ReconIsRunningAlreadyException {
         SubjectInfo subjectInfo = adapter.fetchInfo(name);
-        if (subjectInfo.isReconRunning()) {
+        if (subjectInfo.getStatus() == 1) {
             throw new ReconIsRunningAlreadyException(name);
         }
         String path = subjectInfo.getPath();

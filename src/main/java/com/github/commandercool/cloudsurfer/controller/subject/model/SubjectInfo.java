@@ -39,8 +39,6 @@ public class SubjectInfo {
     @JsonProperty("name")
     private String name;
 
-    @JsonProperty("reconRunning")
-    private boolean reconRunning;
     /**
      * 0 - no run
      * 1 - running
