@@ -9,4 +9,9 @@ public class NoSuchSubjectException extends Exception {
 
     private final String name;
 
+    @Override
+    public String getMessage() {
+        return "There is no subject with name " + name;
+    }
+
 }
