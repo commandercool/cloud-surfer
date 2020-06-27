@@ -2,6 +2,7 @@ package com.github.commandercool.cloudsurfer.controller.mri;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,6 +54,7 @@ public class FileController {
     public ResponseEntity<SubjectList> getSubjects() {
         SubjectList subjectList = new SubjectList();
         subjectList.setSubjects(mriService.getSubjects());
+        subjectList.getSubjects().sort(Comparator.comparing(Subject::getName));
         return ResponseEntity.ok()
                 .body(subjectList);
     }

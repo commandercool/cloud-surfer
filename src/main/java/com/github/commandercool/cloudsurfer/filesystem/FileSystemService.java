@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 import org.springframework.stereotype.Service;
 
 import com.github.commandercool.cloudsurfer.filesystem.model.FsSubjectInfo;
+import com.github.commandercool.cloudsurfer.security.UserHelper;
 
 @Service
 public class FileSystemService {
@@ -26,7 +27,19 @@ public class FileSystemService {
 
     public void saveFile(String fileName, InputStream input) {
         File file = new File(SUBJ_DIR + fileName);
-        file.getParentFile().mkdirs();
+        file.getParentFile()
+                .mkdirs();
+        try (FileOutputStream out = new FileOutputStream(file)) {
+            input.transferTo(out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveLicense(InputStream input) {
+        File file = new File(SUBJ_DIR + "/" + UserHelper.getUserName() + "/license.txt");
+        file.getParentFile()
+                .mkdirs();
         try (FileOutputStream out = new FileOutputStream(file)) {
             input.transferTo(out);
         } catch (IOException e) {
@@ -64,8 +77,7 @@ public class FileSystemService {
     public int getProgress(String path) {
         String log = readStatusLog(path);
         if (!log.isEmpty()) {
-            String[] statusLog = log
-                    .split("\n");
+            String[] statusLog = log.split("\n");
             return (int) Arrays.stream(statusLog)
                     .filter(s -> s.startsWith("#@#"))
                     .count();
@@ -77,8 +89,8 @@ public class FileSystemService {
     public List<String> getRootFolders() {
         List<String> fileList = new ArrayList<>();
         try (Stream<Path> walk = Files.walk(Paths.get(SUBJ_DIR), 1)) {
-            fileList = walk
-                    .filter(p -> !SUBJ_DIR.startsWith(p.getFileName().toString()))
+            fileList = walk.filter(p -> !SUBJ_DIR.startsWith(p.getFileName()
+                    .toString()))
                     .filter(p -> Files.isDirectory(p))
                     .map(Path::getFileName)
                     .map(Path::toString)

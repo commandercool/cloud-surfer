@@ -1,5 +1,7 @@
 package com.github.commandercool.cloudsurfer.controller.subject;
 
+import static java.util.Collections.emptyList;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,22 +34,32 @@ public class SubjectController {
             SubjectInfo info = adapter.fetchInfo(subjectName);
             return ResponseEntity.ok(JsonUtils.marshall(info));
         } catch (NoSuchSubjectException noSubject) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subject not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Subject not found");
         } catch (Exception exception) {
             exception.printStackTrace();
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest()
+                    .build();
         }
     }
 
     @RequestMapping(path = "/tags", method = RequestMethod.PUT, produces = "application/json")
-    public ResponseEntity<String> saveTags(@RequestParam("tags") List<String> tags, @RequestParam("name") String subjectName) {
+    public ResponseEntity<String> saveTags(@RequestParam(name = "tags", required = false) List<String> tags,
+            @RequestParam("name") String subjectName) {
         List<String> currentTags = adapter.fetchTags(subjectName);
-        List<String> toDelete = currentTags.stream()
-                .filter(t -> !tags.contains(t))
-                .collect(Collectors.toList());
-        List<String> toAdd = tags.stream()
-                .filter(t -> !currentTags.contains(t))
-                .collect(Collectors.toList());
+        List<String> toDelete;
+        List<String> toAdd;
+        if (tags != null) {
+            toDelete = currentTags.stream()
+                    .filter(t -> !tags.contains(t))
+                    .collect(Collectors.toList());
+            toAdd = tags.stream()
+                    .filter(t -> !currentTags.contains(t))
+                    .collect(Collectors.toList());
+        } else {
+            toDelete = currentTags;
+            toAdd = emptyList();
+        }
         adapter.addTags(toAdd, subjectName);
         adapter.deleteTags(toDelete, subjectName);
         return ResponseEntity.ok("{ \"deleted\": " + toDelete + ", \"added\": " + toAdd + "}");

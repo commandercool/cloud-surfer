@@ -12,7 +12,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().authorizeRequests()
-                .antMatchers("/subject/v1/**")
+                .antMatchers("/subject/v1/**", "/user/v1/**", "/mri/v1/**")
                 .authenticated()
                 .and()
                 .oauth2ResourceServer().jwt();
