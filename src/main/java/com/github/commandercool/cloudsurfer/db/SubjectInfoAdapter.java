@@ -20,6 +20,18 @@ public class SubjectInfoAdapter {
 
     private final SubjectInfoService subjectInfoService;
 
+    public List<String> fetchTags(String subjectName) {
+        return subjectInfoService.fetchTags(subjectName);
+    }
+
+    public void deleteTags(List<String> tags, String subjectName) {
+        subjectInfoService.deleteTags(tags, subjectName);
+    }
+
+    public void addTags(List<String> tags, String subjectName) {
+        subjectInfoService.addTags(tags, subjectName);
+    }
+
     public SubjectInfo fetchInfo(String name) throws NoSuchSubjectException {
         Result<Record> records = subjectInfoService.fetchSubjectInfo(name);
         if (records.isEmpty()) {
