@@ -30,7 +30,7 @@ public class MriTransactionalService {
     public void addSubject(String name, InputStream mriInput) {
         String path = getPath(name);
         subjectStorageService.addSubject(name, path);
-        fsService.saveFile(path, mriInput);
+        fsService.saveFile(path + "/" + name, mriInput);
     }
 
     public List<Subject> getSubjects() {
@@ -47,7 +47,7 @@ public class MriTransactionalService {
     }
 
     private String getPath(String name) {
-        return "/" + getUserName() + "/" + name.split("\\.")[0] + "/" + name;
+        return "/" + getUserName() + "/" + name.split("\\.")[0];
     }
 
 }
