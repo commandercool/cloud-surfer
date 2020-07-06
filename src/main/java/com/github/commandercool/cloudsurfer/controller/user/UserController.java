@@ -15,9 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.commandercool.cloudsurfer.controller.user.model.UserInfo;
+import com.github.commandercool.cloudsurfer.controller.user.service.UserService;
 import com.github.commandercool.cloudsurfer.db.UserAdapter;
 import com.github.commandercool.cloudsurfer.db.exceptions.NoSuchUserException;
-import com.github.commandercool.cloudsurfer.filesystem.FileSystemService;
 import com.github.commandercool.cloudsurfer.security.UserHelper;
 
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
     private final UserAdapter userAdapter;
-    private final FileSystemService fileSystemService;
+    private final UserService userService;
 
     @RequestMapping(path = "/info", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<String> getUserInfo() throws JsonProcessingException {
@@ -46,7 +46,7 @@ public class UserController {
     @RequestMapping(path = "/license", method = RequestMethod.POST, produces = "application/json")
     public void saveLicense(@RequestParam(name = "upload") MultipartFile licenseFile) {
         try (InputStream inputStream = licenseFile.getInputStream()) {
-            fileSystemService.saveLicense(inputStream);
+            userService.saveLicense(UserHelper.getUserName(), inputStream);
         } catch (IOException e) {
             e.printStackTrace();
         }

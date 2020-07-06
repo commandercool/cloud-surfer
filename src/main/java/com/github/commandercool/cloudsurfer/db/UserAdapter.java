@@ -16,10 +16,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserAdapter {
 
-    private final UserService userService;
+    private final DbUserService dbUserService;
 
     public UserInfo getUserInfo(String login) throws NoSuchUserException {
-        Result<Record> user = userService.getUser(login);
+        Result<Record> user = dbUserService.getUser(login);
         if (user.isEmpty()) {
             throw new NoSuchUserException();
         }
@@ -31,7 +31,11 @@ public class UserAdapter {
     }
 
     public void saveUser(String login, String name) {
-        userService.saveUser(login, name);
+        dbUserService.saveUser(login, name);
+    }
+
+    public void saveLicense(String login, String license) {
+        dbUserService.saveLicense(login, license);
     }
 
 }

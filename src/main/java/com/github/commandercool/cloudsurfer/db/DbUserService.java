@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class UserService {
+public class DbUserService {
 
     @Autowired
     private DSLContext dsl;
@@ -27,6 +27,13 @@ public class UserService {
         dsl.insertInto(USER)
                 .set(USER.LOGIN, login)
                 .set(USER.NAME, name)
+                .execute();
+    }
+
+    public void saveLicense(String login, String path) {
+        dsl.update(USER)
+                .set(USER.LICENSE, path)
+                .where(USER.LOGIN.eq(login))
                 .execute();
     }
 
