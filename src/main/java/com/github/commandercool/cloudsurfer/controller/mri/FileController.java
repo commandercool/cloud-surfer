@@ -50,6 +50,17 @@ public class FileController {
                 .body(new UploadResult("Upload successful"));
     }
 
+    @RequestMapping(path = "/delete", method = RequestMethod.DELETE, produces = "application/json")
+    public ResponseEntity<String> delete(@RequestParam(name = "name") String name) {
+        try {
+            mriService.deleteSubject(name);
+        } catch (Exception exception) {
+            return ResponseEntity.badRequest()
+                    .body(exception.getMessage());
+        }
+        return ResponseEntity.ok("Subject was deleted successfully");
+    }
+
     @RequestMapping(path = "/subjects", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<SubjectList> getSubjects() {
         SubjectList subjectList = new SubjectList();

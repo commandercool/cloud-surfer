@@ -28,6 +28,12 @@ public class SubjectStorageService {
                 .execute();
     }
 
+    public void removeSubject(String name) {
+        dsl.deleteFrom(SUBJECT)
+                .where(SUBJECT.NAME.eq(name))
+                .execute();
+    }
+
     public Result<Record> fetchSubjects() {
         return dsl.select()
                 .from(SUBJECT)

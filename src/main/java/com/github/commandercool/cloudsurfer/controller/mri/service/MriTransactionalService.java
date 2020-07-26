@@ -33,6 +33,11 @@ public class MriTransactionalService {
         fsService.saveFile(path + "/" + name, mriInput);
     }
 
+    public void deleteSubject(String name) {
+        fsService.deleteFolder(getPath(name));
+        subjectStorageService.removeSubject(name);
+    }
+
     public List<Subject> getSubjects() {
         Map<String, Subject> subjectMap = new HashMap<>();
         subjectStorageService.fetchSubjects()

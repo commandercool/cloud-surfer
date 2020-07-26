@@ -36,6 +36,11 @@ public class FileSystemService {
         }
     }
 
+    public void deleteFolder(String path) {
+        File file = new File(SUBJ_DIR + path);
+        file.delete();
+    }
+
     public void saveLicense(InputStream input) {
         File file = new File(SUBJ_DIR + "/" + UserHelper.getUserName() + "/license.txt");
         file.getParentFile()
