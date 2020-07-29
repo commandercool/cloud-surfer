@@ -31,6 +31,7 @@ public class SubjectStorageService {
     public void removeSubject(String name) {
         dsl.deleteFrom(SUBJECT)
                 .where(SUBJECT.NAME.eq(name))
+                .and(SUBJECT.USERNAME.eq(getUserName()))
                 .execute();
     }
 
@@ -39,6 +40,7 @@ public class SubjectStorageService {
                 .from(SUBJECT)
                 .leftJoin(TAGS)
                 .on(TAGS.SUBJ_ID.eq(SUBJECT.ID))
+                .where(SUBJECT.USERNAME.eq(getUserName()))
                 .fetch();
     }
 
