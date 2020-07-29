@@ -13,3 +13,12 @@ spring:
         jwt:
           issuer-uri: http://localhost:8083/auth/realms/cloud-surfer
           jwk-set-uri: http://localhost:8083/auth/realms/cloud-surfer/protocol/openid-connect/certs
+---
+spring:
+  profiles: aws
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://ec2-13-49-127-32.eu-north-1.compute.amazonaws.com:8080/auth/realms/cloud-surfer
+          jwk-set-uri: http://ec2-13-49-127-32.eu-north-1.compute.amazonaws.com:8080/auth/realms/cloud-surfer/protocol/openid-connect/certs
