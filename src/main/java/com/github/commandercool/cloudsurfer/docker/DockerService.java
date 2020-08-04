@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.model.Bind;
+import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.core.DockerClientBuilder;
 
@@ -27,9 +28,13 @@ public class DockerService {
 
     public String runRecon(String subject, String path) {
         String subjectNameTrimmed = subject.split("\\.")[0];
+        final HostConfig hostConfig = new HostConfig();
+        // TODO: switch to host config
+        hostConfig.withCpuQuota(20000L);
         CreateContainerResponse containerRes = client.createContainerCmd("alerokhin/freesurfer6")
-                .withBinds(new Bind("C:\\freesurfer\\license", new Volume("/usr/local/freesurfer/license")),
-                        new Bind("C:\\mri\\cloud-surfer\\freesurfer" + path,
+                .withHostConfig(hostConfig)
+                .withBinds(new Bind("/home/ubuntu/freesurfer/license", new Volume("/usr/local/freesurfer/license")),
+                        new Bind("/home/ubuntu/freesurfer" + path,
                                 new Volume("/usr/local/freesurfer/subjects/" + subjectNameTrimmed)))
                 .withEntrypoint("/bin/bash", "-c",
                                 "cp /usr/local/freesurfer/license/license.txt /usr/local/freesurfer/license.txt;"
