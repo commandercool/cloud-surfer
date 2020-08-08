@@ -1,5 +1,8 @@
 package com.github.commandercool.cloudsurfer.docker;
 
+import static com.github.commandercool.cloudsurfer.filesystem.FileSystemService.LICENSE_PATH;
+import static com.github.commandercool.cloudsurfer.security.UserHelper.getUserName;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Service;
@@ -28,14 +31,8 @@ public class DockerService {
 
     public String runRecon(String subject, String path) {
         String subjectNameTrimmed = subject.split("\\.")[0];
-        final HostConfig hostConfig = new HostConfig();
-        // TODO: switch to host config
-        hostConfig.withCpuQuota(70000L);
         CreateContainerResponse containerRes = client.createContainerCmd("alerokhin/freesurfer6")
-                .withHostConfig(hostConfig)
-                .withBinds(new Bind("/home/ubuntu/freesurfer/license", new Volume("/usr/local/freesurfer/license")),
-                        new Bind("/home/ubuntu/freesurfer" + path,
-                                new Volume("/usr/local/freesurfer/subjects/" + subjectNameTrimmed)))
+                .withHostConfig(getConfig(subjectNameTrimmed, path))
                 .withEntrypoint("/bin/bash", "-c",
                                 "cp /usr/local/freesurfer/license/license.txt /usr/local/freesurfer/license.txt;"
                                 + "export FREESURFER_HOME=/usr/local/freesurfer;"
@@ -53,6 +50,15 @@ public class DockerService {
         client.startContainerCmd(containerRes.getId())
                 .exec();
         return containerRes.getId();
+    }
+
+    private HostConfig getConfig(String subjectNameTrimmed, String path) {
+        final HostConfig hostConfig = new HostConfig();
+        hostConfig.withCpuQuota(70000L);
+        hostConfig.withBinds(new Bind("/home/ubuntu/freesurfer/" + getUserName() + LICENSE_PATH, new Volume("/usr/local/freesurfer/license")),
+                new Bind("/home/ubuntu/freesurfer" + path,
+                        new Volume("/usr/local/freesurfer/subjects/" + subjectNameTrimmed)));
+        return hostConfig;
     }
 
     public boolean isRunning(String id) {
