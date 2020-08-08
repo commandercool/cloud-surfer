@@ -30,7 +30,7 @@ public class DockerService {
         String subjectNameTrimmed = subject.split("\\.")[0];
         final HostConfig hostConfig = new HostConfig();
         // TODO: switch to host config
-        hostConfig.withCpuQuota(20000L);
+        hostConfig.withCpuQuota(70000L);
         CreateContainerResponse containerRes = client.createContainerCmd("alerokhin/freesurfer6")
                 .withHostConfig(hostConfig)
                 .withBinds(new Bind("/home/ubuntu/freesurfer/license", new Volume("/usr/local/freesurfer/license")),
