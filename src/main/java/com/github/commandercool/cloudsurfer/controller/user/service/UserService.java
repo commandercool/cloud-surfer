@@ -1,5 +1,7 @@
 package com.github.commandercool.cloudsurfer.controller.user.service;
 
+import static com.github.commandercool.cloudsurfer.filesystem.FileSystemService.LICENSE_PATH;
+
 import java.io.InputStream;
 
 import org.springframework.stereotype.Service;
@@ -18,7 +20,7 @@ public class UserService {
 
     public void saveLicense(String login, InputStream licenseFile) {
         fileSystemService.saveLicense(licenseFile);
-        userAdapter.saveLicense(login, login + "/license.txt");
+        userAdapter.saveLicense(login, login + LICENSE_PATH);
     }
 
 }

@@ -21,6 +21,8 @@ import com.github.commandercool.cloudsurfer.security.UserHelper;
 @Service
 public class FileSystemService {
 
+    public static final String LICENSE_PATH = "/license/license.txt";
+
     private static final String SUBJ_DIR = "freesurfer";
     private static final String STATUS_LOG = "/scripts/recon-all-status.log";
     private static final String RUN_LOCK = "/scripts/IsRunning.lh+rh";
@@ -42,9 +44,8 @@ public class FileSystemService {
     }
 
     public void saveLicense(InputStream input) {
-        File file = new File(SUBJ_DIR + "/" + UserHelper.getUserName() + "/license.txt");
-        file.getParentFile()
-                .mkdirs();
+        File file = new File(SUBJ_DIR + "/" + UserHelper.getUserName() + LICENSE_PATH);
+        file.getParentFile().mkdirs();
         try (FileOutputStream out = new FileOutputStream(file)) {
             input.transferTo(out);
         } catch (IOException e) {
