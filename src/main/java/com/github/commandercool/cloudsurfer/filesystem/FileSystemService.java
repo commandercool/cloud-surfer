@@ -22,6 +22,7 @@ import com.github.commandercool.cloudsurfer.security.UserHelper;
 public class FileSystemService {
 
     public static final String LICENSE_PATH = "/license/license.txt";
+    public static final String ASEG_PATH = "/stats/aseg.stats";
 
     private static final String SUBJ_DIR = "freesurfer";
     private static final String STATUS_LOG = "/scripts/recon-all-status.log";

@@ -2,6 +2,7 @@ package com.github.commandercool.cloudsurfer.controller.mri.service;
 
 import static com.github.commandercool.cloudsurfer.db.Tables.TAGS;
 import static com.github.commandercool.cloudsurfer.db.tables.Subject.SUBJECT;
+import static com.github.commandercool.cloudsurfer.filesystem.FileSystemService.ASEG_PATH;
 import static com.github.commandercool.cloudsurfer.security.UserHelper.getUserName;
 
 import java.io.IOException;
@@ -30,6 +31,11 @@ public class MriTransactionalService {
 
     public InputStream downloadResut(String name) throws IOException {
         String fileName = getPath(name) + ".tar.gz";
+        return fsService.downloadFile(fileName);
+    }
+
+    public InputStream downloadAseg(String name) throws IOException {
+        String fileName = getPath(name) + ASEG_PATH;
         return fsService.downloadFile(fileName);
     }
 

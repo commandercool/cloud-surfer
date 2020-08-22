@@ -75,6 +75,16 @@ public class FileController {
         }
     }
 
+    @RequestMapping(path = "download/aseg", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity downloadAseg(@RequestParam(name = "name") String name) {
+        try {
+            return ResponseEntity.ok().contentType(MediaType.parseMediaType("text/plain"))
+                    .body(new InputStreamResource(mriService.downloadAseg(name)));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     @RequestMapping(path = "/subjects", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<SubjectList> getSubjects() {
         SubjectList subjectList = new SubjectList();
