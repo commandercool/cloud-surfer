@@ -65,7 +65,7 @@ public class FileController {
         return ResponseEntity.ok("Subject was deleted successfully");
     }
 
-    @RequestMapping(path = "download", method = RequestMethod.GET)
+    @RequestMapping(path = "/download", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity downloadResult(@RequestParam(name = "name") String name) {
         try {
             return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/tar+gzip"))
@@ -75,7 +75,7 @@ public class FileController {
         }
     }
 
-    @RequestMapping(path = "download/aseg", method = RequestMethod.GET)
+    @RequestMapping(path = "/download/aseg", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity downloadAseg(@RequestParam(name = "name") String name) {
         try {
             return ResponseEntity.ok().contentType(MediaType.parseMediaType("text/plain"))
