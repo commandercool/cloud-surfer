@@ -4,6 +4,7 @@ import static com.github.commandercool.cloudsurfer.db.Tables.TAGS;
 import static com.github.commandercool.cloudsurfer.db.tables.Subject.SUBJECT;
 import static com.github.commandercool.cloudsurfer.security.UserHelper.getUserName;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +27,11 @@ public class MriTransactionalService {
 
     private final FileSystemService fsService;
     private final SubjectStorageService subjectStorageService;
+
+    public InputStream downloadResut(String name) throws IOException {
+        String fileName = getPath(name) + ".tar.gz";
+        return fsService.downloadFile(fileName);
+    }
 
     public void addSubject(String name, InputStream mriInput) {
         String path = getPath(name);

@@ -27,10 +27,13 @@ public class FileSystemService {
     private static final String STATUS_LOG = "/scripts/recon-all-status.log";
     private static final String RUN_LOCK = "/scripts/IsRunning.lh+rh";
 
+    public InputStream downloadFile(String fileName) throws IOException {
+        return Files.newInputStream(Paths.get(SUBJ_DIR + fileName));
+    }
+
     public void saveFile(String fileName, InputStream input) {
         File file = new File(SUBJ_DIR + fileName);
-        file.getParentFile()
-                .mkdirs();
+        file.getParentFile().mkdirs();
         try (FileOutputStream out = new FileOutputStream(file)) {
             input.transferTo(out);
         } catch (IOException e) {

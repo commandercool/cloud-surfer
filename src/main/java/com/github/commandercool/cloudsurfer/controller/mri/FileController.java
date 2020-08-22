@@ -6,11 +6,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -59,6 +63,16 @@ public class FileController {
                     .body(exception.getMessage());
         }
         return ResponseEntity.ok("Subject was deleted successfully");
+    }
+
+    @RequestMapping(path = "download", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity downloadResult(@RequestParam(name = "name") String name) {
+        try {
+            return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/tar+gzip"))
+                    .body(new InputStreamResource(mriService.downloadResut(name)));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @RequestMapping(path = "/subjects", method = RequestMethod.GET, produces = "application/json")
