@@ -8,14 +8,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 @Configuration
 @EnableWebSecurity
-@ConditionalOnProperty(prefix = "spring.security", value = "enabled", havingValue = "true", matchIfMissing = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@ConditionalOnProperty(prefix = "spring.security", value = "enabled", havingValue = "false")
+public class FakeSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().authorizeRequests()
-                .antMatchers("/subject/v1/**", "/user/v1/**", "/mri/v1/**", "/container/v1/**").authenticated().and()
-                .oauth2ResourceServer().jwt();
+        http.authorizeRequests().antMatchers("/").permitAll();
     }
 
 }

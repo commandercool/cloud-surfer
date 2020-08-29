@@ -8,11 +8,7 @@ spring:
     username: postgres
     password: postgres
   security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8083/auth/realms/cloud-surfer
-          jwk-set-uri: http://localhost:8083/auth/realms/cloud-surfer/protocol/openid-connect/certs
+    enabled: false
 ---
 spring:
   profiles: aws
@@ -20,5 +16,5 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://ec2-13-49-127-32.eu-north-1.compute.amazonaws.com:8080/auth/realms/cloud-surfer
-          jwk-set-uri: http://ec2-13-49-127-32.eu-north-1.compute.amazonaws.com:8080/auth/realms/cloud-surfer/protocol/openid-connect/certs
+          issuer-uri: https://auth.cloudsurfer.uk/auth/realms/cloud-surfer
+          jwk-set-uri: https://auth.cloudsurfer.uk/auth/realms/cloud-surfer/protocol/openid-connect/certs
