@@ -1,5 +1,7 @@
 package com.github.commandercool.cloudsurfer.background;
 
+import static java.lang.Math.max;
+
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +23,8 @@ public class ActualizeSubjectInfo {
     public void actualizeRunningTasks() {
         adapter.fetchRunningInfo()
                 .forEach(i -> {
-                    i.setProgress(fs.getProgress(i.getPath()));
+                    final int progress = fs.getProgress(i.getPath());
+                    i.setProgress(max(progress, 1));
                     if (dockerService.isRunning(i.getContainer())) {
                         i.setStatus(1);
                     } else if (dockerService.finishedSuccessfully(i.getContainer())) {
