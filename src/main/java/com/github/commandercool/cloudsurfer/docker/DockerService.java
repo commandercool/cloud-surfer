@@ -2,6 +2,8 @@ package com.github.commandercool.cloudsurfer.docker;
 
 import static com.github.commandercool.cloudsurfer.security.UserHelper.getUserName;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Service;
@@ -50,6 +52,33 @@ public class DockerService {
         client.startContainerCmd(containerRes.getId())
                 .exec();
         return containerRes.getId();
+    }
+
+    public String runAseg(List<String> subjects) {
+        CreateContainerResponse containerRes = client.createContainerCmd("alerokhin/asegtools")
+                .withHostConfig(getAsegConfig())
+                .withEntrypoint("cd /script/;"
+                        + "export SUBJECTS_DIR=/subjects"
+                        + "./asegstats2table --subjects " + getSubjects(subjects) + "--tablefile /subjects/asegtable")
+                .exec();
+        client.startContainerCmd(containerRes.getId())
+                .exec();
+        return containerRes.getId();
+    }
+
+    private String getSubjects(List<String> subjects) {
+        StringBuilder paramBuilder = new StringBuilder();
+        subjects.forEach(s -> {
+            paramBuilder.append(paramBuilder);
+            paramBuilder.append(" ");
+        });
+        return paramBuilder.toString();
+    }
+
+    private HostConfig getAsegConfig() {
+        final HostConfig hostConfig = new HostConfig();
+        hostConfig.withBinds(new Bind("/home/ubuntu/freesurfer/" + getUserName(), new Volume("/subjects")));
+        return hostConfig;
     }
 
     private HostConfig getConfig(String subjectNameTrimmed, String path) {
