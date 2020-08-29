@@ -1,6 +1,5 @@
 package com.github.commandercool.cloudsurfer.docker;
 
-import static com.github.commandercool.cloudsurfer.filesystem.FileSystemService.LICENSE_PATH;
 import static com.github.commandercool.cloudsurfer.security.UserHelper.getUserName;
 
 import javax.annotation.PostConstruct;
@@ -39,10 +38,11 @@ public class DockerService {
                                 + "source /usr/local/freesurfer/SetUpFreeSurfer.sh;"
                                 + "echo $FREESURFER_HOME;"
                                 + "cd /usr/local/freesurfer/subjects/" + subjectNameTrimmed + ";"
-                                        + "pwd;"
+                                + "pwd;"
                                 + "ls -l;"
-                                + "mkdir mri mri/orig;"
-                                + "mri_convert " + subject + " mri/orig/001.mgz;"
+                                + "mkdir mri;" + "cd mri/;" + "mkdir orig;"
+                                + "mri_convert ../" + subject + " orig/001.mgz;"
+                                + "cd ../;"
                                 + "rm -f /usr/local/freesurfer/subjects/" + subjectNameTrimmed + "/scripts/IsRunning.lh+rh;"
                                 + "rm -f /usr/local/freesurfer/subjects/" + subjectNameTrimmed + "/scripts/recon-all-status.log;"
                                 + "recon-all -all -subjid " + subjectNameTrimmed)
@@ -55,9 +55,8 @@ public class DockerService {
     private HostConfig getConfig(String subjectNameTrimmed, String path) {
         final HostConfig hostConfig = new HostConfig();
         hostConfig.withCpuQuota(70000L);
-        hostConfig.withBinds(new Bind("/home/ubuntu/freesurfer/" + getUserName() + LICENSE_PATH, new Volume("/usr/local/freesurfer/license")),
-                new Bind("/home/ubuntu/freesurfer" + path,
-                        new Volume("/usr/local/freesurfer/subjects/" + subjectNameTrimmed)));
+        hostConfig.withBinds(new Bind("/home/ubuntu/freesurfer/" + getUserName() + "/license", new Volume("/usr/local/freesurfer/license")),
+                new Bind("/home/ubuntu/freesurfer" + path, new Volume("/usr/local/freesurfer/subjects/" + subjectNameTrimmed)));
         return hostConfig;
     }
 
