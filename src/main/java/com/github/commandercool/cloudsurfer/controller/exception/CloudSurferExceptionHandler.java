@@ -7,12 +7,16 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @ControllerAdvice(annotations = Controller.class)
 public class CloudSurferExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(value = {Exception.class})
     public ResponseEntity<String> handleException(Exception e) {
+        log.error("ERROR: ", e);
         ResponseEntity.BodyBuilder responseBuilder;
         if (e instanceof IllegalArgumentException) {
             responseBuilder = ResponseEntity.status(400);
