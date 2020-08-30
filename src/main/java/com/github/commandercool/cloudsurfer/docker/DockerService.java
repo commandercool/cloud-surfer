@@ -70,7 +70,7 @@ public class DockerService {
     private String getSubjects(List<String> subjects) {
         StringBuilder paramBuilder = new StringBuilder();
         subjects.forEach(s -> {
-            paramBuilder.append(s);
+            paramBuilder.append(s.split("\\.")[0]);
             paramBuilder.append(" ");
         });
         return paramBuilder.toString();
