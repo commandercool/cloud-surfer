@@ -2,7 +2,9 @@ package com.github.commandercool.cloudsurfer.controller.subject.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -49,7 +51,7 @@ public class SubjectInfo {
     private int status;
 
     @JsonProperty("tags")
-    private List<String> tags = new ArrayList<>();
+    private Set<String> tags = new HashSet<>();
 
     @JsonProperty("steps")
     private List<ReconAllStep> stepStatList = new ArrayList<>();

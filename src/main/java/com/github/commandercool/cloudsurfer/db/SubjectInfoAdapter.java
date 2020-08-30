@@ -1,6 +1,7 @@
 package com.github.commandercool.cloudsurfer.db;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.jooq.Record;
@@ -37,33 +38,33 @@ public class SubjectInfoAdapter {
         if (records.isEmpty()) {
             throw new NoSuchSubjectException(name);
         }
-        SubjectInfo info = new SubjectInfo(name);
-        info.setStatus(records.get(0)
-                .get(Subject.SUBJECT.STATUS, Integer.class));
-        info.setProgress(records.get(0)
-                .get(Subject.SUBJECT.PROGRESS, Integer.class));
-        info.setPath(records.get(0)
-                .get(Subject.SUBJECT.PATH, String.class));
-        records.forEach(r -> {
-            info.getTags()
-                    .add(r.get(Tags.TAGS.TAG, String.class));
-        });
+        return fetchInfo(records.get(0), fetchTags(records));
+    }
+
+    private SubjectInfo fetchInfo(Record record, Set<String> tags) {
+        SubjectInfo info = new SubjectInfo(record.get(Subject.SUBJECT.NAME, String.class));
+        info.setStatus(record.get(Subject.SUBJECT.STATUS, Integer.class));
+        info.setProgress(record.get(Subject.SUBJECT.PROGRESS, Integer.class));
+        info.setPath(record.get(Subject.SUBJECT.PATH, String.class));
+        info.setTags(tags);
         return info;
+    }
+
+    private Set<String> fetchTags(Result<Record> records) {
+        return records.stream().map(record -> record.get(Tags.TAGS.TAG, String.class)).collect(Collectors.toSet());
     }
 
     public List<SubjectInfo> fetchRunningInfo() {
         Result<Record> records = subjectInfoService.fetchRunningSubjectInfo();
-        return records.stream()
-                .map(r -> {
-                    SubjectInfo info = new SubjectInfo();
-                    info.setId(r.get(Subject.SUBJECT.ID, Integer.class));
-                    info.setName(r.get(Subject.SUBJECT.NAME, String.class));
-                    info.setContainer(r.get(Subject.SUBJECT.CONTAINER, String.class));
-                    info.setProgress(r.get(Subject.SUBJECT.PROGRESS, Integer.class));
-                    info.setPath(r.get(Subject.SUBJECT.PATH, String.class));
-                    return info;
-                })
-                .collect(Collectors.toList());
+        return records.stream().map(r -> {
+            SubjectInfo info = new SubjectInfo();
+            info.setId(r.get(Subject.SUBJECT.ID, Integer.class));
+            info.setName(r.get(Subject.SUBJECT.NAME, String.class));
+            info.setContainer(r.get(Subject.SUBJECT.CONTAINER, String.class));
+            info.setProgress(r.get(Subject.SUBJECT.PROGRESS, Integer.class));
+            info.setPath(r.get(Subject.SUBJECT.PATH, String.class));
+            return info;
+        }).collect(Collectors.toList());
     }
 
     public void updateSubjectInfo(SubjectInfo info) {

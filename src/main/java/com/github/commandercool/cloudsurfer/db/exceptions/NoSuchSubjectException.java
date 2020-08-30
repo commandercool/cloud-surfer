@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class NoSuchSubjectException extends Exception {
+public class NoSuchSubjectException extends IllegalArgumentException {
 
     private final String name;
 
