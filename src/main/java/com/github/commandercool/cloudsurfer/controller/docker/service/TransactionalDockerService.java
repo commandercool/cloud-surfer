@@ -37,8 +37,8 @@ public class TransactionalDockerService {
         adapter.setRunning(name, container);
     }
 
-    public void runAseg(List<String> tags) {
-        // TODO: run aseg to table
+    public void runAseg(List<String> subjects) {
+        dockerService.runAseg(subjects);
     }
 
 }
