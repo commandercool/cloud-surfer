@@ -57,9 +57,10 @@ public class DockerService {
     public String runAseg(List<String> subjects) {
         CreateContainerResponse containerRes = client.createContainerCmd("alerokhin/asegtools")
                 .withHostConfig(getAsegConfig())
-                .withEntrypoint("cd /script/;"
-                        + "export SUBJECTS_DIR=/subjects"
-                        + "./asegstats2table --subjects " + getSubjects(subjects) + "--tablefile /subjects/asegtable")
+                .withEntrypoint("/bin/bash", "-c",
+                        "cd /script/;"
+                        + "export SUBJECTS_DIR=/subjects;"
+                        + "./asegstats2table --subjects " + getSubjects(subjects) + "--tablefile /subjects/asegtable;")
                 .exec();
         client.startContainerCmd(containerRes.getId())
                 .exec();
