@@ -39,6 +39,11 @@ public class MriTransactionalService {
         return fsService.downloadFile(fileName);
     }
 
+    public InputStream downloadAsegTable(String tag) throws IOException {
+        String fileName = "/" + getUserName() + "/" + tag;
+        return fsService.downloadFile(fileName);
+    }
+
     public void addSubject(String name, InputStream mriInput) {
         String path = getPath(name);
         subjectStorageService.addSubject(name, path);

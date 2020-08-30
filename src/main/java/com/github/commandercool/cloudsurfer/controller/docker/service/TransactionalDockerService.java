@@ -1,7 +1,5 @@
 package com.github.commandercool.cloudsurfer.controller.docker.service;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,10 +33,6 @@ public class TransactionalDockerService {
         String path = subjectInfo.getPath();
         String container = dockerService.runRecon(name, path);
         adapter.setRunning(name, container);
-    }
-
-    public void runAseg(List<String> subjects) {
-        dockerService.runAseg(subjects);
     }
 
 }
