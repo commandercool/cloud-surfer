@@ -55,4 +55,14 @@ public class DockerController {
                 .body(new InputStreamResource(mriService.downloadAsegTable(tag)));
     }
 
+    @RequestMapping(path = "/download/aseg2table/preview", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<String> previewAseg2Table(@RequestParam(name = "tag") String tag)
+            throws IOException {
+        final String id = dockerService.runAseg(subjectStorageService.fetchSubjectsByTag(tag), tag);
+        while (dockerService.isRunning(id)) {
+            // TODO: limit here
+        }
+        return ResponseEntity.ok(mriService.downloadAsegTablePreview(tag));
+    }
+
 }
