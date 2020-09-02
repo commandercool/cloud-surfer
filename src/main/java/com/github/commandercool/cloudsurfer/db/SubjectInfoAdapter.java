@@ -25,6 +25,10 @@ public class SubjectInfoAdapter {
         return subjectInfoService.fetchTags(subjectName);
     }
 
+    public List<String> fetchTags() {
+        return subjectInfoService.fetchTags();
+    }
+
     public void deleteTags(List<String> tags, String subjectName) {
         subjectInfoService.deleteTags(tags, subjectName);
     }

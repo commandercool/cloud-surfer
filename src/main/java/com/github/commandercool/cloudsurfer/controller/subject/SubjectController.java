@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.commandercool.cloudsurfer.controller.subject.model.SubjectInfo;
 import com.github.commandercool.cloudsurfer.controller.utils.JsonUtils;
 import com.github.commandercool.cloudsurfer.db.SubjectInfoAdapter;
@@ -63,6 +64,11 @@ public class SubjectController {
         adapter.addTags(toAdd, subjectName);
         adapter.deleteTags(toDelete, subjectName);
         return ResponseEntity.ok("{ \"deleted\": " + toDelete + ", \"added\": " + toAdd + "}");
+    }
+
+    @RequestMapping(path = "/tags", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<String> getTags() throws JsonProcessingException {
+        return ResponseEntity.ok(JsonUtils.marshall(adapter.fetchTags()));
     }
 
 }

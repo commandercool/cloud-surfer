@@ -50,6 +50,15 @@ public class SubjectInfoService {
                 .fetch(TAGS.TAG);
     }
 
+    public List<String> fetchTags() {
+        return dsl.selectDistinct(TAGS.TAG)
+                .from(TAGS)
+                .join(SUBJECT)
+                .on(TAGS.SUBJ_ID.eq(SUBJECT.ID))
+                .where(SUBJECT.USERNAME.eq(getUserName()))
+                .fetch(TAGS.TAG);
+    }
+
     public Result<Record> fetchSubjectInfo(String name) {
         return dsl.select()
                 .from(SUBJECT)
