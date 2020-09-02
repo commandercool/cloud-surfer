@@ -10,7 +10,6 @@ import lombok.Setter;
 @Setter
 public class AsegTablePreview {
 
-    private List<String> headings = new ArrayList<>();
-    private List<SubjectAsegStats> subjectAsegStatsList = new ArrayList<>();
+    private List<SubjectAsegStats> stats = new ArrayList<>();
 
 }
