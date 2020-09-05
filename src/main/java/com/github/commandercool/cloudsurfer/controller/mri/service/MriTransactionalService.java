@@ -5,6 +5,8 @@ import static com.github.commandercool.cloudsurfer.db.tables.Subject.SUBJECT;
 import static com.github.commandercool.cloudsurfer.filesystem.FileSystemService.ASEG_PATH;
 import static com.github.commandercool.cloudsurfer.security.UserHelper.getUserName;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -19,6 +21,11 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,6 +62,49 @@ public class MriTransactionalService {
     }
 
     public String downloadAsegTablePreview(String tag) throws IOException {
+        final AsegTablePreview asegTablePreview = fetchPreview(tag);
+        return JsonUtils.marshall(asegTablePreview);
+    }
+
+    public InputStream downloadAsegTableXls(String tag) throws Exception {
+        final AsegTablePreview asegTablePreview = fetchPreview(tag);
+        ByteArrayInputStream byteArrayInputStream;
+        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();) {
+            Sheet sheet = workbook.createSheet("tag");
+
+            Row header = sheet.createRow(0);
+
+            final Field[] declaredFields = SubjectAsegStats.class.getDeclaredFields();
+
+            for (int i = 0; i < declaredFields.length; i++) {
+                setCellValue(header, i, declaredFields[i].getName());
+            }
+
+            for (SubjectAsegStats stats : asegTablePreview.getStats()) {
+                Row row = sheet.createRow(sheet.getLastRowNum() + 1);
+                for (int i = 0; i < declaredFields.length; i++) {
+                    try {
+                        final Method getter =
+                                SubjectAsegStats.class.getMethod("get" + StringUtils.capitalize(declaredFields[i].getName()));
+                        setCellValue(row, i, getter.invoke(stats).toString());
+                    } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            workbook.write(byteArrayOutputStream);
+            byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        }
+        return byteArrayInputStream;
+    }
+
+    private Cell setCellValue(Row row, int pos, String value) {
+        Cell cell = row.createCell(pos);
+        cell.setCellValue(value);
+        return cell;
+    }
+
+    private AsegTablePreview fetchPreview(String tag) throws IOException {
         final InputStream inputStream = downloadAsegTable(tag);
         final LineIterator lineIterator = IOUtils.lineIterator(inputStream, Charset.defaultCharset());
         final AsegTablePreview asegTablePreview = new AsegTablePreview();
@@ -86,7 +136,7 @@ public class MriTransactionalService {
 
             asegTablePreview.getStats().add(subjectAsegStats);
         }
-        return JsonUtils.marshall(asegTablePreview);
+        return asegTablePreview;
     }
 
     public void addSubject(String name, InputStream mriInput) {
